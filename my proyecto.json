@@ -1,0 +1,115 @@
+{
+  "name": "my proyecto",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/notify",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5f36c32b-56be-403f-8840-eb862dff70c1",
+      "name": "Webhook",
+      "webhookId": "15443c39-8f74-4430-80cb-c3af07f9438b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "80ef6d9f-7efb-49fa-9628-d9518970fdec",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        0
+      ],
+      "id": "7f932968-a7db-4dcb-b8e9-ae81662bb8fd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -16
+      ],
+      "id": "876377e4-7bfb-4f9c-862b-1990843b84fb",
+      "name": "Send a message",
+      "webhookId": "0c2af845-d76e-498b-880e-38c4de3ce0aa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lBFefyvnK3FeCvsb",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c9f7458c-c7df-45e1-9a80-44f1f993bab6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "10a6e5c60663eee67e7a3b30539241efe34ec56cdd69ec01d83e9eaa9b27c95e"
+  },
+  "id": "ulb1QV5awAK5ztEm",
+  "tags": []
+}
