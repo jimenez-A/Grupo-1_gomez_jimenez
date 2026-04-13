@@ -1,0 +1,200 @@
+{
+  "name": "MCP SERVER - FACTURAS INTELIGENTES",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "3b4c42b9-4a8b-4a65-91bd-c18af7f86ea5"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        -32
+      ],
+      "id": "af64cef7-f199-49e5-ba85-d3f783976bc4",
+      "name": "MCP Server Trigger",
+      "webhookId": "3b4c42b9-4a8b-4a65-91bd-c18af7f86ea5",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ItdNn8LUvbbueplQ",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Analiza una factura desde una URL de PDF. Extrae proveedor, número de factura, fecha, items, subtotal, impuestos y total. Recibe como parámetro la URL del archivo PDF de la factura.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "LWpn3DCOBPYMiZpH",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/LWpn3DCOBPYMiZpH",
+          "cachedResultName": "tool- analizar factura"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -448,
+        176
+      ],
+      "id": "b2a88b72-63a3-4388-9e55-9c76a1847cea",
+      "name": "analizar_factura"
+    },
+    {
+      "parameters": {
+        "description": "Guarda los datos de una factura analizada en la base de datos de Notion. Recibe: proveedor, numero_factura, fecha, subtotal, impuestos, total, moneda, items, estado.",
+        "workflowId": {
+          "__rl": true,
+          "value": "tNIIOmsb0dSI5OFu",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/tNIIOmsb0dSI5OFu",
+          "cachedResultName": "tool- guardar notion"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        176
+      ],
+      "id": "7c27b07c-990c-4d59-9de5-3d7573d3d6b3",
+      "name": "guardar_factura_notion"
+    },
+    {
+      "parameters": {
+        "description": "Envía un mensaje de notificación por Telegram con el resumen de una factura o cualquier mensaje relevante. Recibe: mensaje (texto a enviar).",
+        "workflowId": {
+          "__rl": true,
+          "value": "dFqwikrqjbSEICuJ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dFqwikrqjbSEICuJ",
+          "cachedResultName": "Tool - Notificar Telegram"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        176
+      ],
+      "id": "b613a750-4b24-4020-9eb4-0ca4a6f3c385",
+      "name": "notificar_telegram"
+    },
+    {
+      "parameters": {
+        "description": "Consulta las facturas almacenadas en Notion. Puede filtrar por proveedor. Recibe: proveedor (opcional, nombre del proveedor para filtrar).",
+        "workflowId": {
+          "__rl": true,
+          "value": "aAMQT2FmawLoZaLd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/aAMQT2FmawLoZaLd",
+          "cachedResultName": "Tool - Consultar Facturas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        176
+      ],
+      "id": "00aded4f-6282-41ba-9d0a-a5baef6d3031",
+      "name": "consultar_facturas"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "analizar_factura": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "guardar_factura_notion": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notificar_telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_facturas": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "4c8d2bdd-8645-466b-8ae6-5b55e8ff2a08",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d86adf46028fff64da851cb422ffce26c82d7c387daaab5815b8d1122a51e2ea"
+  },
+  "id": "VRoGmpre9g31D0rD",
+  "tags": []
+}

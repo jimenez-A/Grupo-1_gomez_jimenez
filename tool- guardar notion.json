@@ -1,0 +1,149 @@
+{
+  "name": "tool- guardar notion",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -320,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear los datos de la factura que envía Claude\nconst input = $input.first().json.query;\nlet data;\n\ntry {\n  data = JSON.parse(input);\n} catch (e) {\n  // Si no es JSON válido, intentar extraer datos del texto\n  data = {\n    proveedor: input,\n    numero_factura: \"No especificado\",\n    fecha: new Date().toISOString().split('T')[0],\n    subtotal: 0,\n    impuestos: 0,\n    total: 0,\n    moneda: \"COP\",\n    items: \"No especificado\",\n    estado: \"Pendiente\"\n  };\n}\n\nreturn [{\n  json: {\n    proveedor: data.proveedor || \"No especificado\",\n    numero_factura: data.numero_factura || \"No especificado\",\n    fecha: data.fecha || new Date().toISOString().split('T')[0],\n    subtotal: parseFloat(data.subtotal) || 0,\n    impuestos: parseFloat(data.impuestos) || 0,\n    total: parseFloat(data.total) || 0,\n    moneda: data.moneda || \"COP\",\n    items: typeof data.items === 'object' \n      ? JSON.stringify(data.items) \n      : String(data.items || \"No especificado\"),\n    estado: data.estado || \"Pendiente\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        320
+      ],
+      "id": "0f780c0b-f912-4919-8394-9e2cb4aaf4b0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "33ddf010-929f-8076-8382-f0da01d8a2cb",
+          "mode": "list",
+          "cachedResultName": "33ddf010-929f-8076-8382-f0da01d8a2cb",
+          "cachedResultUrl": "https://www.notion.so/33ddf010929f80768382f0da01d8a2cb"
+        },
+        "title": "={{ $json.proveedor }}",
+        "simple": "=",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "proveedor |title",
+              "title": "={{ $json.proveedor }}"
+            },
+            {
+              "key": "Fecha factura|date",
+              "includeTime": false,
+              "date": "={{ $json.fecha }}"
+            },
+            {
+              "key": "numero de factura|rich_text",
+              "textContent": "={{ $json.numero_factura }}"
+            },
+            {
+              "key": "Subtotal|number",
+              "numberValue": "={{ $json.subtotal }}"
+            },
+            {
+              "key": "Impuestos|number",
+              "numberValue": "={{ $json.impuestos }}"
+            },
+            {
+              "key": "Total|number",
+              "numberValue": "={{ $json.total }}"
+            },
+            {
+              "key": "Moneda|select",
+              "selectValue": "={{ $json.moneda }}"
+            },
+            {
+              "key": "Items|rich_text",
+              "textContent": "={{ $json.items }}"
+            },
+            {
+              "key": "Estado|select",
+              "selectValue": "={{ $json.estado }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        272
+      ],
+      "id": "7de8fca6-d3f9-4b46-9f0d-be65b54ad3e8",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "IizBDFxlqBItpVNw",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "{\"proveedor\": \"Corhuila Insumos\", \"numero_factura\": \"FACT-2026\", \"fecha\": \"2026-04-10\", \"total\": 85000, \"moneda\": \"COP\", \"estado\": \"Pendiente\"}"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "versionId": "7c47ad7a-c34c-40b5-8575-0075bf2811d4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d86adf46028fff64da851cb422ffce26c82d7c387daaab5815b8d1122a51e2ea"
+  },
+  "id": "tNIIOmsb0dSI5OFu",
+  "tags": []
+}

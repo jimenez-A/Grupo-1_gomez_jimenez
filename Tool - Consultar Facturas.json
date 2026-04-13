@@ -1,0 +1,137 @@
+{
+  "name": "Tool - Consultar Facturas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -80,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "getAll",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        288
+      ],
+      "id": "a9fd629f-79ee-4443-8b4b-60d3211666ff",
+      "name": "Get many databases",
+      "credentials": {
+        "notionApi": {
+          "id": "IizBDFxlqBItpVNw",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1766fa05-6d13-4c53-9d1f-6af569866e5a",
+              "leftValue": "=={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        288
+      ],
+      "id": "2eafabb8-6b2c-470d-b7fb-3e2cd53d0adb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst facturas = items.map(item => {\n  // Accedemos de forma segura a las propiedades\n  const props = item.json.properties || {};\n  \n  return {\n    proveedor: props[\"numero de factura\"]?.title?.[0]?.plain_text || \"N/A\",\n    fecha: props[\"Fecha factura\"]?.date?.start || \"N/A\",\n    subtotal: props[\"Subtotal\"]?.number || 0,\n    impuestos: props[\"Impuestos\"]?.number || 0,\n    total: props[\"Total\"]?.number || 0,\n    moneda: props[\"Moneda\"]?.select?.name || \"COP\",\n    estado: props[\"Estado\"]?.select?.name || \"N/A\"\n  };\n});\n\nconst resumen = {\n  total_facturas: facturas.length,\n  suma_total: facturas.reduce((acc, f) => acc + f.total, 0),\n  facturas: facturas\n};\n\nreturn [{\n  json: {\n    response: JSON.stringify(resumen, null, 2)\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        272
+      ],
+      "id": "ed8e0838-b4c9-447f-bdf2-792853e52486",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get many databases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many databases": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "versionId": "37065498-5f9e-4867-8507-7b9c620fe1c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d86adf46028fff64da851cb422ffce26c82d7c387daaab5815b8d1122a51e2ea"
+  },
+  "id": "aAMQT2FmawLoZaLd",
+  "tags": []
+}

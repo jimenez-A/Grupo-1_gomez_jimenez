@@ -1,0 +1,104 @@
+{
+  "name": "Tool - Notificar Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        256
+      ],
+      "id": "a8c258af-3364-47b9-ab2d-933acffee673",
+      "name": "When Executed by Another Workflow",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4dfd6b3f-a8e8-4569-9b2f-8f0b8fdeacc6",
+              "name": " mensaje",
+              "value": "=={{ \"📄 *Notificación de Facturas n8n*\\n\\n\" + $json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        256
+      ],
+      "id": "965b2c71-e01c-47ee-a83a-c9906a62ecd3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "7912478824",
+        "text": "=={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        256
+      ],
+      "id": "58812845-5025-477e-9a78-6bd8b846ba18",
+      "name": "Send a text message",
+      "webhookId": "c47d2b52-a833-49e5-992b-b4a987a44156",
+      "credentials": {
+        "telegramApi": {
+          "id": "Oto6r7pVZhepUgnG",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "versionId": "04440cc6-93be-44ba-9244-514c15468b08",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d86adf46028fff64da851cb422ffce26c82d7c387daaab5815b8d1122a51e2ea"
+  },
+  "id": "dFqwikrqjbSEICuJ",
+  "tags": []
+}
