@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(02-session/**)",
+      "Bash(streamlit run app.py)",
+      "Bash(pip install *)",
+      "Bash(python *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)"
+    ]
+  },
+  "model": "claude-opus-4-5",
+  "hooks": {
+    "PreToolUse": [".claude/hooks/validate-bash.sh"]
+  }
+}
